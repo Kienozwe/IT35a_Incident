@@ -1,74 +1,225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Incident Management System</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Incident Report Management System</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Leaflet Map Library CSS -->
+    <link rel="stylesheet"href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <circle
+              cx="16"
+              cy="16"
+              r="14"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M16 10v6l4 4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span>IncidentTracker</span>
+        </div>
+        <!-- Navigation Links -->
+        <div class="nav-links" id="navLinks">
+          <a href="#home" class="nav-link active">Map</a>
+          <a href="#reports" class="nav-link">Reports</a>
+          <a href="#submit" class="nav-link">Submit Report</a>
+        </div>
+        <div class="nav-auth" id="navAuth">
+        </div>
+      </div>
+    </nav>
+    <!-- Main Content Part -->
+    <main class="main-content">
+   
+      <!-- Map Section w interactive map -->
+      <section id="mapSection" class="section active">
+        <div class="section-header">
+          <h1>Incident Map</h1>
+          <p>Real-time visualization of reported incidents</p>
+          <!-- Map Filter -->
+          <div class="map-controls">
+            <select id="statusFilter" class="filter-select">
+              <option value="">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="False Report">False Report</option>
+            </select>
+            <select id="priorityFilter" class="filter-select">
+              <option value="">All Priority</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+            <button class="btn-outline" id="refreshMap">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M14 8A6 6 0 1 1 8 2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M8 2L8 6L12 6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+        <!-- Leaflet Map -->
+        <div id="map" class="map-container"></div>
+      </section>
 
-<nav>
-  <h2>Incident Tracker</h2>
-  <ul>
-    <li onclick="showSection('home')">Home</li>
-    <li onclick="showSection('submit')">Submit Report</li>
-    <li onclick="showSection('reports')">Reports</li>
-    <li onclick="showSection('login')">Login</li>
-    <li id="adminNav" onclick="showSection('admin')" style="display:none;">Admin</li>
-  </ul>
-</nav>
+      <!-- Display all incidents in table -->
+      <section id="reportsSection" class="section">
+        <div class="section-header">
+          <h1>All Reports</h1>
+          <p>View and manage incident reports</p>
+        </div>
+        <!-- Report Table -->
+        <div class="table-container">
+          <table class="reports-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Reported</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <!-- Table Body ni -->
+            <tbody id="reportsTableBody">
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-<!-- HOME -->
-<section id="home" class="section active">
-  <h1>Welcome to Incident Tracker</h1>
-  <p>A system for reporting and monitoring incidents.</p>
-</section>
+      <!-- Submit Section Form for new incident report -->
+      <section id="submitSection" class="section">
+        <div class="section-header">
+          <h1>Submit Incident Report</h1>
+          <p>Report a new incident in your area</p>
+        </div>
+        <div class="form-container">
+          <form id="submitForm" class="incident-form">
+            <div class="form-group">
+              <label for="incidentTitle">Title *</label>
+              <input
+                type="text"
+                id="incidentTitle"
+                required
+                placeholder="Brief description of the incident"
+              />
+            </div>
 
-<!-- SUBMIT REPORT -->
-<section id="submit" class="section">
-  <h1>Submit Incident Report</h1>
+            <!-- Incident Category (naka-Dropdown) -->
+            <div class="form-group">
+              <label for="incidentCategory">Category</label>
+              <select id="incidentCategory">
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="Road Maintenance">Road Maintenance</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Vandalism">Vandalism</option>
+                <option value="Emergency">Emergency</option>
+                <option value="Environmental">Environmental</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
 
-  <div class="map" onclick="getLocation()">
-    🗺️ Click the map to get your location
-  </div>
+            <div class="form-group">
+              <label for="incidentPriority">Priority</label>
+              <select id="incidentPriority">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
 
-  <form id="reportForm">
-    <label>Location</label>
-    <input type="text" id="location" required>
+            <!-- Incident Description Input -->
+            <div class="form-group">
+              <label for="incidentDescription">Description *</label>
+              <textarea
+                id="incidentDescription"
+                required
+                rows="5"
+                placeholder="Detailed description of the incident"
+              ></textarea>
+            </div>
 
-    <label>Date & Time</label>
-    <input type="text" id="time" readonly>
+            <!-- Location Selection -->
+            <div class="form-group">
+              <label>Location *</label>
+              <!-- Get Current Location Button -->
+              <button
+                type="button"
+                class="btn-outline btn-location"
+                id="getCurrentLocation"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="2"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M8 1v2M8 13v2M1 8h2M13 8h2"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                Use Current Location
+              </button>
+              <!-- Location Displ -->
+              <div class="location-display" id="locationDisplay">
+                <span id="locationText">Click to get your location</span>
+              </div>
+              <input type="hidden" id="latitude" />
+              <input type="hidden" id="longitude" />
+            </div>
 
-    <label>Description</label>
-    <textarea id="description" required></textarea>
+            <!-- Map Location Selection -->
+            <div class="form-group">
+              <div id="submitMap" class="submit-map"></div>
+            </div>
 
-    <button type="submit">Submit Report</button>
-  </form>
-</section>
+            <!-- Submit Button -->
+            <button type="submit" class="btn-primary btn-submit">
+              Submit Report
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
 
-<!-- REPORT LIST -->
-<section id="reports" class="section">
-  <h1>Incident Reports</h1>
-  <ul id="reportList"></ul>
-</section>
-
-<!-- LOGIN -->
-<section id="login" class="section">
-  <h1>Login</h1>
-  <input type="text" id="username" placeholder="Enter username">
-  <button onclick="login()">Login</button>
-</section>
-
-<!-- ADMIN DASHBOARD -->
-<section id="admin" class="section">
-  <h1>Admin Dashboard</h1>
-  <div class="admin-box">
-    <p><strong>Total Reports:</strong> <span id="totalReports">0</span></p>
-    <p><strong>System Status:</strong> Active</p>
-    <p><strong>Role:</strong> Administrator</p>
-  </div>
-</section>
-
-<script src="script.js"></script>
-</body>
+    <!-- Leaflet Map Library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- App Logic -->
+    <script src="map.js"></script>
+  </body>
 </html>
