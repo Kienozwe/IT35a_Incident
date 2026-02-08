@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Incident Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <h2>Incident Tracker</h2>
+  <ul>
+    <li onclick="showSection('home')">Home</li>
+    <li onclick="showSection('submit')">Submit Report</li>
+    <li onclick="showSection('reports')">Reports</li>
+    <li onclick="showSection('login')">Login</li>
+    <li id="adminNav" onclick="showSection('admin')" style="display:none;">Admin</li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="section active">
+  <h1>Welcome to Incident Tracker</h1>
+  <p>A system for reporting and monitoring incidents.</p>
+</section>
+
+<!-- SUBMIT REPORT -->
+<section id="submit" class="section">
+  <h1>Submit Incident Report</h1>
+
+  <div class="map" onclick="getLocation()">
+    🗺️ Click the map to get your location
+  </div>
+
+  <form id="reportForm">
+    <label>Location</label>
+    <input type="text" id="location" required>
+
+    <label>Date & Time</label>
+    <input type="text" id="time" readonly>
+
+    <label>Description</label>
+    <textarea id="description" required></textarea>
+
+    <button type="submit">Submit Report</button>
+  </form>
+</section>
+
+<!-- REPORT LIST -->
+<section id="reports" class="section">
+  <h1>Incident Reports</h1>
+  <ul id="reportList"></ul>
+</section>
+
+<!-- LOGIN -->
+<section id="login" class="section">
+  <h1>Login</h1>
+  <input type="text" id="username" placeholder="Enter username">
+  <button onclick="login()">Login</button>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="admin" class="section">
+  <h1>Admin Dashboard</h1>
+  <div class="admin-box">
+    <p><strong>Total Reports:</strong> <span id="totalReports">0</span></p>
+    <p><strong>System Status:</strong> Active</p>
+    <p><strong>Role:</strong> Administrator</p>
+  </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
